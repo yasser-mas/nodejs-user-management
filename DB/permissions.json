@@ -1,0 +1,17 @@
+[
+{ "_id" : { "$oid" : "5ca8d2ecebf7982f736f77bc" }, "name" : "Add User", "path" : "/users", "method" : "POST", "isDefault" : false },
+{ "_id" : { "$oid" : "5ca924a1ebf798085daea400" }, "name" : "Get All Users", "path" : "/users", "method" : "GET", "isDefault" : false },
+{ "_id" : { "$oid" : "5ca92782ebf798085daea407" }, "name" : "Get User By ID", "path" : "/users/?", "method" : "GET", "isDefault" : false },
+{ "_id" : { "$oid" : "5ca9386febf798085daea40d" }, "name" : "Delete User By ID", "path" : "/users/?", "method" : "DELETE", "isDefault" : false },
+{ "_id" : { "$oid" : "5ca93c2aebf798085daea42b" }, "name" : "Edit User", "path" : "/users", "method" : "PUT", "isDefault" : false },
+{ "_id" : { "$oid" : "5caa8692ebf7980b7bd90515" }, "name" : "Get All Permissions", "path" : "/permissions", "method" : "GET", "isDefault" : false },
+{ "_id" : { "$oid" : "5caa8f44ebf7980b7bd9051b" }, "name" : "Get All Groups", "path" : "/groups", "method" : "GET", "isDefault" : false },
+{ "_id" : { "$oid" : "5caa9072ebf7980b7bd9051c" }, "name" : "Get Group By ID", "path" : "/groups/?", "method" : "GET", "isDefault" : false },
+{ "_id" : { "$oid" : "5caa90faebf7980b7bd9051d" }, "name" : "Add Group", "path" : "/groups", "method" : "POST", "isDefault" : false },
+{ "_id" : { "$oid" : "5caa9283ebf7980b7bd90528" }, "name" : "Delete Group", "path" : "/groups/?", "method" : "DELETE", "isDefault" : false },
+{ "_id" : { "$oid" : "5caa92f7ebf7980b7bd90532" }, "name" : "Edit Group", "path" : "/groups", "method" : "PUT", "isDefault" : false },
+{ "_id" : { "$oid" : "5cafc3caebf798106a01c5dc" }, "path" : "/users/changeOwnPassword", "method" : "put", "isDefault" : true, "name" : "Change Own Password" },
+{ "_id" : { "$oid" : "5cafc3caebf798106a01c5dd" }, "path" : "/users/changeOwnInfo", "method" : "put", "name" : "Change Own Info", "isDefault" : true },
+{ "_id" : { "$oid" : "5cafc3caebf798106a01c5de" }, "path" : "/auth/getUserByToken", "method" : "get", "name" : "Get User By Token", "isDefault" : true },
+{ "_id" : { "$oid" : "5cb51c5aebf79829ff302fa8" }, "path" : "/auth/loginAs/?", "method" : "POST", "name" : "Login As", "isDefault" : true }
+]

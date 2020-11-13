@@ -1,10 +1,4 @@
-import {
-  IPermissionsModel,
-  PermissionsModel
-} from './models/permissions-model';
-import { UserModel, IUserModel } from './models/users-model';
 import mongoose, { Mongoose, Connection } from 'mongoose';
-import { IGroupsModel, GroupsModel } from './models/groups-model';
 
 export default class DBConnection {
   /*
@@ -47,13 +41,4 @@ export default class DBConnection {
     });
   }
 
-  get PermissionsModel(): IPermissionsModel {
-    return PermissionsModel;
-  }
-  get GroupsModel(): IGroupsModel {
-    return GroupsModel;
-  }
-  get UserModel(): IUserModel {
-    return UserModel;
-  }
 }

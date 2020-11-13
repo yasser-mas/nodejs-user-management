@@ -1,5 +1,5 @@
 # Nodejs User Management
-------------
+
 Nodejs User Management is an appication to help administrators manage user identities including password resets, creating and provisioning, blocking and deleting users.
 
 
@@ -36,9 +36,9 @@ Nodejs User Management is an appication to help administrators manage user ident
 ### Tech
 
 Node-UM uses a number of open source projects to work properly:
-* [node.js] 
+* [node.js](https://nodejs.org)
 * [Typescript](https://www.typescriptlang.org)
-* [Express] 
+* [Express](https://expressjs.com/)
 * [Mongodb](https://www.mongodb.com) 
 * [Mongoose](https://mongoosejs.com)
 * [Joi](https://github.com/hapijs/joi)
@@ -47,7 +47,7 @@ Node-UM uses a number of open source projects to work properly:
 
 ### Installation
 
-Node-UM requires [node.js], [Mongodb](https://www.mongodb.com)
+Node-UM requires [node.js](https://nodejs.org), [Mongodb](https://www.mongodb.com)
 
 Install the dependencies and devDependencies and import DB Collections from DB folder.
 then run the below script to start the server.
@@ -104,8 +104,9 @@ User login is like any other user management application, it will check if usern
 -------------
  **Get User By Token**
  I will return user if token exists and not expired also it will remove expired sessions ( asyc ), Also it will update current token expiration date
- 
- > PS. Get user by token the only web service which will update token expiry date, that behavior based on, this web service will be called when user open the web page so no need to update token expiry with all requests
+
+>  PS. Get user by token the only web service which will update token expiry date, that behavior based on, this web service will be called when user open the web page so no need to update token expiry with all requests
+
 ------------
  **Reset Password**
 User can reset own password by two steps 

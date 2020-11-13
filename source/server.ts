@@ -8,6 +8,9 @@ import DBConnection from './db';
 import { PermissionsRoutes } from './routes/permissions-route';
 import { GroupsRoutes } from './routes/groups-route';
 import { PermissionsList } from './lib/cached-permissions';
+import { PermissionsModel } from './models/permissions-model';
+import { GroupsModel } from './models/groups-model';
+import { mongo, Mongoose } from 'mongoose';
 
 /*
  * Creating Express App
@@ -64,7 +67,7 @@ export class Server {
       console.log('DB Connected');
 
       // Get All Permissions to use it in interceptor
-      let permissionsList = await this.db.PermissionsModel.getAllPermissions();
+      let permissionsList = await PermissionsModel.getAllPermissions();
       PermissionsList.setPermissionsList(permissionsList);
 
       // Start Server :)

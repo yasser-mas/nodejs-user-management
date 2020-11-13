@@ -19,7 +19,7 @@
   "author": "Yasser Abuomira <yasser.mas2@gmail.com>",
   "license": "ISC",
   "dependencies": {
-    "bcrypt": "^5.0.0",
+    "bcrypt": "5.0.0",
     "dotenv": "^7.0.0",
     "express": "^4.16.4",
     "joi": "^14.3.1",

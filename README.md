@@ -45,6 +45,18 @@ Node-UM uses a number of open source projects to work properly:
 * [jsonwebtoken](https://www.npmjs.com/package/jsonwebtoken)
 
 
+
+### Docker Installation
+
+If you have docker and docker compose, just run the below commands then the application will start listening on port 8082 
+
+```sh
+$ tsc
+$ docker-compose up 
+
+```
+
+
 ### Installation
 
 Node-UM requires [node.js](https://nodejs.org), [Mongodb](https://www.mongodb.com)

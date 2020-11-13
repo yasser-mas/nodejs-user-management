@@ -1,0 +1,28 @@
+version: '3.1'
+
+services:
+
+  mongo:
+    container_name: um_mongo
+    image: mongo:4.2.10
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - ./DB:/DB
+      - ./init-mongo.sh:/docker-entrypoint-initdb.d/init-mongo.sh
+    
+
+  node_app:
+    container_name: um_node_app
+    working_dir: /usr/app
+    image: node:12.16.2-stretch-slim
+    entrypoint: node build/index.js
+    restart: always
+    ports:
+      - 8082:8082
+    depends_on:
+      - mongo
+    volumes:
+      - ./:/usr/app
+    

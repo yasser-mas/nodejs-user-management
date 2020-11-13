@@ -7,10 +7,8 @@ export default class DBConnection {
   DB_OPTIONS = {
     useNewUrlParser: Boolean(process.env.USE_NEW_URL_PARSER) || true,
     useCreateIndex: true,
-    autoReconnect: Boolean(process.env.AUTO_RECONNECT) || true,
-    poolSize: Number(process.env.POOL_SIZE) || 50,
-    reconnectInterval: Number(process.env.RECONNECT_INTERVAL) || 1000,
-    reconnectTries: Number(process.env.RECONNECT_TRIES) || 30
+    useUnifiedTopology: true,
+    poolSize: Number(process.env.POOL_SIZE) || 50
   };
 
   db: Mongoose = mongoose;
@@ -19,7 +17,6 @@ export default class DBConnection {
   constructor() {
     this.db.Promise = Promise;
     this.db.set('useFindAndModify', false);
-    this.db.set('ensureIndex', false);
 
     this.db.connect(
       process.env.DB_URL || 'mongodb://localhost:27017/usermanagement',

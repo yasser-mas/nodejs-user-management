@@ -24,8 +24,8 @@ export interface IUserDocument extends Document {
   isActive?: boolean;
   isSuperUser?: boolean;
   groups: IGroupsDocumnet[];
-  resetPassword?: { token: string; expires: Date };
-  activeSessions: [{ token: string; expires: Date }];
+  resetPassword?: { token: string; expires: Date } | {} ;
+  activeSessions: [{ token: string; expires: Date }] | [];
   getAllPermissions(): IPermissionsDocument[];
   updateUser(): DocumentQuery<IUserDocument[], IUserDocument, {}>;
 }

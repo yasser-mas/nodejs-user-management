@@ -125,7 +125,7 @@ User can reset own password by two steps
  
  
  
-### Todos
+### Todo
 
  - Child Permissions ( eg. Add user should have get all users and get user by ID )
  - User Permissions ( Not only groups have permissions but also user should have permissions )

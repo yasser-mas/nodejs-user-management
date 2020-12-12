@@ -22,13 +22,7 @@ export class PermissionsRoutes {
       ) => {
         let responseBody: HTTPErrorResponse | HTTPSuccessResponse;
 
-        try {
-          responseBody = await this.permissionsController.getAllPermissions();
-        } catch (error) {
-          responseBody = new HTTPErrorResponse([
-            { code: 500, message: error.message }
-          ]);
-        }
+        responseBody = await this.permissionsController.getAllPermissions();
 
         response.status(200);
         response.json(responseBody);

@@ -25,7 +25,7 @@ export interface IUserDocument extends Document {
   isSuperUser?: boolean;
   groups: IGroupsDocumnet[];
   resetPassword?: { token: string; expires: Date } | {} ;
-  activeSessions: [{ token: string; expires: Date }] | [];
+  refreshToken?: string;
   getAllPermissions(): IPermissionsDocument[];
   updateUser(): DocumentQuery<IUserDocument[], IUserDocument, {}>;
 }
@@ -70,9 +70,12 @@ export interface IUserModel extends Model<IUserDocument> {
   getUserByToken(
     body: any
   ): DocumentQuery<IUserDocument | null, IUserDocument, {}>;
-  updateSessionExpiry(body: any): Promise<any>;
-  removeOldSessions(body: IUserDocument): Promise<any>;
-  removeAllSessions(body: IUserDocument): Promise<any>;
+  resetPasswordTokenExists(
+    body: any
+  ): DocumentQuery<IUserDocument | null, IUserDocument, {}>;
+  getUserRefreshToken(
+    body: any
+  ): DocumentQuery<IUserDocument | null, IUserDocument, {}>;
 }
 
 export let UserSchema: Schema = new Schema(
@@ -87,7 +90,7 @@ export let UserSchema: Schema = new Schema(
     isSuperUser: { type: Boolean, default: false },
     resetPassword: { token: String, expires: Date },
     groups: [{ type: Schema.Types.ObjectId, ref: 'Group' }],
-    activeSessions: [{ token: String, expires: Date }]
+    refreshToken: String
   },
   { timestamps: true, collation: { locale: 'en_US', strength: 2 } }
 );
@@ -123,8 +126,10 @@ UserSchema.post('save', duplicatesErrorHandller);
 
 UserSchema.statics.updateUser = function(
   user: IUserDocument
-): DocumentQuery<IUserDocument[], IUserDocument, {}> {
-  return (<IUserModel> this).updateOne({ _id: user._id, deleted: false }, user);
+): DocumentQuery<IUserDocument | null, IUserDocument, {}>  {
+  return (<IUserModel> this).findOneAndUpdate({ _id: user._id, deleted: false }, user,
+    { new: false })
+    .select('-refreshToken');
 };
 
 UserSchema.statics.addUser = function(user: any): Promise<IUserDocument> {
@@ -136,7 +141,7 @@ UserSchema.statics.changePassword = function(
 ): DocumentQuery<IUserDocument[], IUserDocument, {}> {
   return (<IUserModel> this).updateOne(
     { _id: user._id, deleted: false },
-    { password: user.newPassword, activeSessions: [] }
+    { password: user.newPassword, refreshToken: '' }
   );
 };
 
@@ -151,7 +156,7 @@ UserSchema.statics.changePasswordByToken = function(
       'resetPassword.expires': { $gt: new Date() },
       deleted: false
     },
-    { password: newPassword, activeSessions: [], resetPassword: {} }
+    { password: newPassword, refreshToken: '', resetPassword: {} }
   );
 };
 
@@ -183,7 +188,7 @@ UserSchema.statics.getAllUsers = function(
 ): DocumentQuery<IUserDocument[], IUserDocument, {}> {
   return (<IUserModel> this)
     .find({ deleted: false })
-    .select(' -activeSessions')
+    .select('-refreshToken')
     .skip(Number(query.offset))
     .limit(Number(query.limit))
     .sort({
@@ -199,7 +204,7 @@ UserSchema.statics.countUsers = function(query: UserQueryModel): Query<number> {
 UserSchema.statics.getUserById = function(
   _id: string
 ): DocumentQuery<IUserDocument | null, IUserDocument, {}> {
-  return (<IUserModel> this).findOne({ _id, deleted: false }).populate({
+  return (<IUserModel> this).findOne({ _id, deleted: false }).select('-refreshToken').populate({
     path: 'groups',
     match: { deleted: { $ne: true } },
     populate: { path: 'permissions' }
@@ -209,7 +214,11 @@ UserSchema.statics.getUserById = function(
 UserSchema.statics.getUserByUsername = function(
   username: string
 ): DocumentQuery<IUserDocument | null, IUserDocument, {}> {
-  return (<IUserModel> this).findOne({ username, deleted: false });
+  return (<IUserModel> this).findOne({ username, deleted: false }).populate({
+    path: 'groups',
+    match: { deleted: { $ne: true } },
+    populate: { path: 'permissions' }
+  });
 };
 
 /*
@@ -222,24 +231,20 @@ UserSchema.statics.addSession = function(
   user: any,
   token: string
 ): DocumentQuery<IUserDocument | null, IUserDocument, {}> {
-  let expiryDate = new Date(
-    new Date().getTime() + Number(process.env.SESSION_EXP_TIME)
-  );
 
   return (<IUserModel> this).findOneAndUpdate(
     { _id: user._id, deleted: false },
-    { $push: { activeSessions: { token, expires: expiryDate } } },
+    { refreshToken : token },
     { new: true }
   );
 };
 
 UserSchema.statics.logout = function(
-  token: string
+  _id: string
 ): DocumentQuery<IUserDocument | null, IUserDocument, {}> {
   return (<IUserModel> this).updateOne(
-    { activeSessions: { $elemMatch: { token } } },
-    { $pull: { activeSessions: { token: { $eq: token } } } },
-    { new: true }
+    { _id },
+    { refreshToken: ''  }
   );
 };
 
@@ -248,45 +253,37 @@ UserSchema.statics.getUserByToken = function(
 ): DocumentQuery<IUserDocument | null, IUserDocument, {}> {
   return (<IUserModel> this)
     .findOne({
-      activeSessions: {
-        $elemMatch: { token, expires: { $gt: new Date() } }
-      },
+      refreshToken:token,
       deleted: false
     })
-    .select('-activeSessions')
+    .select('-refreshToken')
     .populate({ path: 'groups', populate: { path: 'permissions' } });
 };
 
-UserSchema.statics.updateSessionExpiry = function(token: string): Promise<any> {
-  let expiryDate = new Date(
-    new Date().getTime() + Number(process.env.SESSION_EXP_TIME)
-  );
+
+UserSchema.statics.resetPasswordTokenExists = function(
+  token: string
+): DocumentQuery<IUserDocument | null, IUserDocument, {}> {
   return (<IUserModel> this)
-    .findOneAndUpdate(
-      { activeSessions: { $elemMatch: { token } }, deleted: false },
-      { $set: { 'activeSessions.$.expires': expiryDate } }
-    )
-    .exec();
+    .findOne({
+      'resetPassword.token': token,
+      deleted: false
+    });
 };
 
-UserSchema.statics.removeOldSessions = function(
-  user: IUserDocument
-): Promise<any> {
-  let expiryDate = new Date(
-    new Date().getTime() - Number(process.env.SESSION_EXP_TIME)
-  );
-  return user
-    .updateOne({
-      $pull: { activeSessions: { expires: { $lt: expiryDate } } }
-    })
-    .exec();
+
+
+UserSchema.statics.getUserRefreshToken = function(
+  _id: string
+): DocumentQuery<IUserDocument | null, IUserDocument, {}> {
+  return (<IUserModel> this)
+    .findOne({
+      _id ,
+      deleted: false
+    }, 'refreshToken -_id');
 };
 
-UserSchema.statics.removeAllSessions = function(
-  user: IUserDocument
-): Promise<any> {
-  return user.updateOne({ activeSessions: [] }).exec();
-};
+
 export const UserModel: IUserModel = model<IUserDocument, IUserModel>(
   'User',
   UserSchema

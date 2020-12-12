@@ -1,13 +1,20 @@
 import { UserModel, IUserDocument } from './../models/users-model';
 import HTTPErrorResponse from './../lib/http/http-error-response';
 import HTTPSuccessResponse from '../lib/http/http-success-response';
-import { sign, verify } from 'jsonwebtoken';
-import HTTPAuthErrorResponse from '../lib/http/http-error-auth';
 import { Request } from 'express';
 import { hash, compare } from 'bcrypt';
 import { PermissionsList } from '../lib/cached-permissions';
 import { ERROR_CODES } from '../lib/error-codes';
+import { TokenPayload } from '../dto/token-payload';
+import { JwtHelper } from '../helpers/jwt-helper';
+
+
 export class AuthController {
+  
+  jwtHelper : JwtHelper = JwtHelper.getInstance();
+  TOKEN_REQUIRED_BY_DEFAULT : boolean = (process.env.TOKEN_REQUIRED_BY_DEFAULT === 'true');
+  PERMISSION_REQUIRED_BY_DEFAULT : boolean = ( process.env.PERMISSION_REQUIRED_BY_DEFAULT === 'true');
+
   constructor() {}
 
   async login(body: any): Promise<HTTPErrorResponse | HTTPSuccessResponse> {
@@ -16,32 +23,28 @@ export class AuthController {
     try {
       const user = await UserModel.getUserByUsername(body.username);
 
+      
       // If User Exists and hashed password match given password
       if (user && (await compare(body.password, <string>user.password))) {
         // Token Obj
-        const tokenObj = {
-          _id: user._id,
-          username: user.username
-        };
+        let tokenPayload = new TokenPayload(user) ; 
 
-        // Generate token
-        const token = sign(tokenObj, String(process.env.JWT_SECRET_KEY));
+        // Generate tokens
+        const accessToken = await this.jwtHelper.getAccessToken(tokenPayload);
+        const refreshToken = await this.jwtHelper.getRefreshToken(tokenPayload);
 
         // Add session to user
-        const updatedUser = await UserModel.addSession(user, token);
+        const updatedUser = await UserModel.addSession(user, refreshToken);
 
         if (updatedUser) {
           responseBody = new HTTPSuccessResponse({
-            user: updatedUser,
-            tokenObj:
-              updatedUser.activeSessions[updatedUser.activeSessions.length - 1]
+            accessToken, 
+            refreshToken
           });
         } else {
           responseBody = new HTTPErrorResponse([ERROR_CODES.GENERATE_TOKEN]);
         }
 
-        // Remove All Expired Sessions Async
-        this.removeOldSessions(user);
       } else {
         responseBody = new HTTPErrorResponse([
           ERROR_CODES.WRONG_USERNAME_OR_PASS
@@ -57,6 +60,51 @@ export class AuthController {
     return responseBody;
   }
 
+
+  async refreshToken(token: string): Promise<HTTPErrorResponse | HTTPSuccessResponse> {
+    let responseBody: HTTPErrorResponse | HTTPSuccessResponse;
+
+    try {
+      const user = await UserModel.getUserByToken(token);
+
+      
+      // If User Exists 
+      if (user) {
+        // Token Obj
+
+        let tokenPayload = new TokenPayload(user) ; 
+
+        // Generate tokens
+        const accessToken = await this.jwtHelper.getAccessToken(tokenPayload);
+        const refreshToken = await this.jwtHelper.getRefreshToken(tokenPayload);
+
+        // Add session to user
+        const updatedUser = await UserModel.addSession(user, refreshToken);
+
+        if (updatedUser) {
+          responseBody = new HTTPSuccessResponse({
+            accessToken, 
+            refreshToken
+          });
+        } else {
+          responseBody = new HTTPErrorResponse([ERROR_CODES.GENERATE_TOKEN]);
+        }
+
+      } else {
+        responseBody = new HTTPErrorResponse([
+          ERROR_CODES.INVALID_TOKEN
+        ]);
+      }
+    } catch (error) {
+      console.log(error);
+      responseBody = new HTTPErrorResponse([
+        ERROR_CODES.INVALID_TOKEN
+      ]);
+    }
+
+    return responseBody;
+  }
+
   // Login As For Super user only who can login as any user
   async loginAs(_id: any): Promise<HTTPErrorResponse | HTTPSuccessResponse> {
     let responseBody: HTTPErrorResponse | HTTPSuccessResponse;
@@ -66,26 +114,27 @@ export class AuthController {
       const user = await UserModel.getUserById(_id);
 
       if (user) {
-        const tokenObj = {
-          _id: user._id,
-          username: user.username
-        };
+        let tokenPayload = new TokenPayload(user) ; 
+        // Generate tokens
+        const accessToken = await this.jwtHelper.getAccessToken(tokenPayload);
+        const userToken = <IUserDocument>  await UserModel.getUserRefreshToken(user.id);
+        let refreshToken : string ; 
+        if(!userToken.refreshToken){
 
-        const token = sign(tokenObj, String(process.env.JWT_SECRET_KEY));
+          refreshToken = await this.jwtHelper.getRefreshToken(tokenPayload);
+          
+          // Add session to user
+          await UserModel.addSession(user, refreshToken);
 
-        const updatedUser = await UserModel.addSession(user, token);
-
-        if (updatedUser) {
-          responseBody = new HTTPSuccessResponse({
-            user: updatedUser,
-            tokenObj:
-              updatedUser.activeSessions[updatedUser.activeSessions.length - 1]
-          });
-        } else {
-          responseBody = new HTTPErrorResponse([ERROR_CODES.GENERATE_TOKEN]);
+        }else{
+          refreshToken = userToken.refreshToken;
         }
 
-        this.removeOldSessions(user);
+        responseBody = new HTTPSuccessResponse({
+          accessToken, 
+          refreshToken: refreshToken
+        });
+
       } else {
         responseBody = new HTTPErrorResponse([ERROR_CODES.INVALID_USER_ID]);
       }
@@ -101,9 +150,11 @@ export class AuthController {
   ): Promise<HTTPErrorResponse | HTTPSuccessResponse> {
     let responseBody: HTTPErrorResponse | HTTPSuccessResponse;
 
-    const user = await UserModel.logout(token);
+    const user = await this.jwtHelper.getAccessTokenPayload(token);
+    
+    await UserModel.logout(user._id);
 
-    responseBody = new HTTPSuccessResponse(user);
+    responseBody = new HTTPSuccessResponse({});
 
     return responseBody;
   }
@@ -113,15 +164,20 @@ export class AuthController {
     username: string
   ): Promise<HTTPErrorResponse | HTTPSuccessResponse> {
     let responseBody: HTTPErrorResponse | HTTPSuccessResponse;
+    try {
 
-    const user = await UserModel.generateResetPasswordToken(username);
+      const user = await UserModel.getUserByUsername(username);
 
-    if (!user) {
-      responseBody = new HTTPErrorResponse([ERROR_CODES.INVALID_USER_ID]);
-    } else {
-      responseBody = new HTTPSuccessResponse(user);
+      if (!user) {
+        responseBody = new HTTPErrorResponse([ERROR_CODES.INVALID_USER_NAME]);
+      } else {
+        await UserModel.generateResetPasswordToken(username);
+        responseBody = new HTTPSuccessResponse({});
 
-      // Send Mail Here ----------------------->
+        // Send Mail Here ----------------------->
+      }
+    } catch (error) {
+      responseBody = new HTTPErrorResponse([ERROR_CODES.UNEXPECTED_ERROR]);
     }
 
     return responseBody;
@@ -135,16 +191,17 @@ export class AuthController {
     let responseBody: HTTPErrorResponse | HTTPSuccessResponse;
 
     try {
-      const hashedPassword = await hash(newPassword, 10);
+      const tokenExists = await UserModel.resetPasswordTokenExists(token);
 
-      newPassword = hashedPassword;
+      if( !tokenExists){
+        responseBody = new HTTPErrorResponse([ERROR_CODES.INVALID_TOKEN]); 
+      }else{
+        const hashedPassword = await hash(newPassword, 10);
 
-      const user = await UserModel.changePasswordByToken(token, newPassword);
-
-      if (!user) {
-        responseBody = new HTTPErrorResponse([ERROR_CODES.INVALID_TOKEN]);
-      } else {
-        responseBody = new HTTPSuccessResponse(user);
+        newPassword = hashedPassword;
+        await UserModel.changePasswordByToken(token, newPassword);
+        responseBody = new HTTPSuccessResponse({});
+  
       }
     } catch (error) {
       responseBody = new HTTPErrorResponse([ERROR_CODES.UNEXPECTED_ERROR]);
@@ -154,7 +211,7 @@ export class AuthController {
   }
 
   // Check if user permissions contain request URL and Method
-  async isAuthorized(user: IUserDocument, request: Request): Promise<boolean> {
+  async isAuthorized(user: TokenPayload , request: Request): Promise<boolean> {
     let isAuthorized = false;
 
     if (user && user._id) {
@@ -165,23 +222,28 @@ export class AuthController {
        *     => change request url path param to be ? to compare permission against the request url
        *     => /changeUserByID/1231231231  => /changeUserByID/?
        */
-      user.getAllPermissions().forEach(permission => {
-        let requestPath = request.path.split('/');
+      user.groups.forEach(group=>{
+        group.permissions.forEach(permission => {
+          let requestPath = request.path.split('/');
 
-        permission.path.split('/').forEach((path, index, fullPath) => {
-          if (path == '?' && requestPath[index]) {
-            requestPath[index] = '?';
+          permission.path.split('/').forEach((path, index, fullPath) => {
+            if (path == '?' && requestPath[index]) {
+              requestPath[index] = '?';
+            }
+          });
+
+          // let requestPath = request.path;
+          // let perRegex = '^' + permission.path.replace(/\?/g,'[^\/]+').replace(/\//g,'\/') + '$';
+          // var re = new RegExp(perRegex);
+          
+          if (
+            permission.path.toLowerCase() === requestPath.join('/').toLowerCase() &&
+            permission.method.toLowerCase() === request.method.toLowerCase()
+          ) {
+            isAuthorized = true;
+            return;
           }
         });
-
-        if (
-          permission.path.toLowerCase() ===
-            requestPath.join('/').toLowerCase() &&
-          permission.method.toLowerCase() === request.method.toLowerCase()
-        ) {
-          isAuthorized = true;
-          return;
-        }
       });
     }
     return isAuthorized;
@@ -200,8 +262,8 @@ export class AuthController {
   checkPermissions(
     request: Request
   ): { tokenRequired: boolean; permissionRequired: boolean } {
-    let permissionRequired = false;
-    let tokenRequired = false;
+    let tokenRequired = this.TOKEN_REQUIRED_BY_DEFAULT;
+    let permissionRequired = this.PERMISSION_REQUIRED_BY_DEFAULT;
 
     PermissionsList.getPermissionsList().forEach(permission => {
       let requestPath = request.path.split('/');
@@ -232,14 +294,13 @@ export class AuthController {
     let responseBody: HTTPErrorResponse | HTTPSuccessResponse;
 
     try {
-      const user = await UserModel.getUserByToken(token);
+
+      const tokenPayload = await this.jwtHelper.getAccessTokenPayload(token);
+      
+      const user = await UserModel.getUserById(tokenPayload._id);
 
       if (user) {
         responseBody = new HTTPSuccessResponse(user);
-
-        // Update session expiry and remove expired session Asyc
-        UserModel.updateSessionExpiry(token);
-        this.removeOldSessions(user);
       } else {
           responseBody = new HTTPErrorResponse([ERROR_CODES.INVALID_TOKEN]);
       }
@@ -251,7 +312,4 @@ export class AuthController {
     return responseBody;
   }
 
-  removeOldSessions(user: IUserDocument) {
-    UserModel.removeOldSessions(user);
-  }
 }

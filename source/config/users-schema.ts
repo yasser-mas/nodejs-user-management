@@ -30,6 +30,12 @@ export const LOGIN_SCHEMA = Joi.object()
   }).required();
 
 
+  export const REFRESH_TOKEN_SCHEMA = Joi.object()
+  .keys({
+    token: REQUIRED_STRING
+  }).required();
+
+
 export const LOGOUT_SCHEMA = Joi.object()
   .keys({
     token: REQUIRED_STRING

@@ -10,8 +10,8 @@
 { "_id" : { "$oid" : "5caa90faebf7980b7bd9051d" }, "name" : "Add Group", "path" : "/groups", "method" : "POST", "isDefault" : false },
 { "_id" : { "$oid" : "5caa9283ebf7980b7bd90528" }, "name" : "Delete Group", "path" : "/groups/?", "method" : "DELETE", "isDefault" : false },
 { "_id" : { "$oid" : "5caa92f7ebf7980b7bd90532" }, "name" : "Edit Group", "path" : "/groups", "method" : "PUT", "isDefault" : false },
-{ "_id" : { "$oid" : "5cafc3caebf798106a01c5dc" }, "path" : "/users/changeOwnPassword", "method" : "put", "isDefault" : true, "name" : "Change Own Password" },
-{ "_id" : { "$oid" : "5cafc3caebf798106a01c5dd" }, "path" : "/users/changeOwnInfo", "method" : "put", "name" : "Change Own Info", "isDefault" : true },
-{ "_id" : { "$oid" : "5cafc3caebf798106a01c5de" }, "path" : "/auth/getUserByToken", "method" : "get", "name" : "Get User By Token", "isDefault" : true },
-{ "_id" : { "$oid" : "5cb51c5aebf79829ff302fa8" }, "path" : "/auth/loginAs/?", "method" : "POST", "name" : "Login As", "isDefault" : true }
+{ "_id" : { "$oid" : "5cafc3caebf798106a01c5dc" }, "path" : "/users/change-own-password", "method" : "put", "isDefault" : true, "name" : "Change Own Password" },
+{ "_id" : { "$oid" : "5cafc3caebf798106a01c5dd" }, "path" : "/users/change-own-info", "method" : "put", "name" : "Change Own Info", "isDefault" : true },
+{ "_id" : { "$oid" : "5cafc3caebf798106a01c5de" }, "path" : "/auth/get-user-by-token", "method" : "get", "name" : "Get User By Token", "isDefault" : true },
+{ "_id" : { "$oid" : "5cb51c5aebf79829ff302fa8" }, "path" : "/auth/login-as/?", "method" : "POST", "name" : "Login As", "isDefault" : true }
 ]

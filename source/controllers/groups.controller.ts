@@ -51,8 +51,12 @@ export class GroupController {
 
     let responseBody: HTTPErrorResponse | HTTPSuccessResponse;
     try {
-      const deletedGroup = await GroupsModel.softDelete(body._id);
-      responseBody = new HTTPSuccessResponse(deletedGroup);
+      const groupExists = await GroupsModel.getGroupById(body._id);
+      if( !groupExists){
+        return new HTTPErrorResponse([ERROR_CODES.INVALID_GROUP_ID]);
+      }
+      await GroupsModel.softDelete(body._id);
+      responseBody = new HTTPSuccessResponse({});
 
     } catch (error) {
       console.log(error);
@@ -87,13 +91,15 @@ export class GroupController {
 
     let responseBody: HTTPErrorResponse | HTTPSuccessResponse;
     try {
-      const groupExists = await GroupsModel.getGroupByName(group.name);
+      const groupExists = await GroupsModel.getGroupById(group._id);
 
       if (groupExists) {
-        return new HTTPErrorResponse([ERROR_CODES.GROUP_EXISTS]);;
+        const updatedGroup = await GroupsModel.updateGroup(group);
+        responseBody = new HTTPSuccessResponse(updatedGroup);
+      }else{
+        responseBody = new HTTPErrorResponse([ERROR_CODES.INVALID_GROUP_ID]);;
+
       }
-      const updatedGroup = await GroupsModel.updateGroup(group);
-      responseBody = new HTTPSuccessResponse(updatedGroup);
 
     } catch (error) {
       console.log(JSON.stringify(error));

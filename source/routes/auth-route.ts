@@ -1,4 +1,4 @@
-import { LOGIN_SCHEMA, LOGOUT_SCHEMA } from './../config/users-schema';
+import { LOGIN_SCHEMA, REFRESH_TOKEN_SCHEMA } from './../config/users-schema';
 import Joi from 'joi';
 import express from 'express';
 import HTTPErrorResponse from '../lib/http/http-error-response';
@@ -31,13 +31,7 @@ export class AuthRoutes {
         const validateScehma = Joi.validate(request.body, LOGIN_SCHEMA);
 
         if (!validateScehma.error) {
-          try {
             responseBody = await this.authController.login(request.body);
-          } catch (error) {
-            responseBody = new HTTPErrorResponse([
-              { code: error.code || 500, message: error.message }
-            ]);
-          }
         } else {
           responseBody = new HTTPErrorResponse(getListOfErrors(validateScehma));
         }
@@ -47,8 +41,9 @@ export class AuthRoutes {
       }
     );
 
-    this.router.get(
-      '/getUserByToken',
+
+    this.router.post(
+      '/refresh-token',
       async (
         request: express.Request,
         response: express.Response,
@@ -56,16 +51,29 @@ export class AuthRoutes {
       ) => {
         let responseBody: HTTPErrorResponse | HTTPSuccessResponse;
 
-        try {
-          let user = response.locals.userData;
-          if (user) {
-            responseBody = new HTTPSuccessResponse(response.locals.userData);
-          } else {
-            responseBody = new HTTPErrorResponse([ERROR_CODES.INVALID_TOKEN]);
-          }
-        } catch (error) {
-          responseBody = new HTTPErrorResponse([ERROR_CODES.INVALID_TOKEN]);
+        const validateScehma = Joi.validate(request.body, REFRESH_TOKEN_SCHEMA);
+
+        if (!validateScehma.error) {
+            responseBody = await this.authController.refreshToken(request.body.token);
+        } else {
+          responseBody = new HTTPErrorResponse(getListOfErrors(validateScehma));
         }
+
+        response.status(200);
+        response.json(responseBody);
+      }
+    );
+    this.router.get(
+      '/get-user-by-token',
+      async (
+        request: express.Request,
+        response: express.Response,
+        next: express.NextFunction
+      ) => {
+        let responseBody: HTTPErrorResponse | HTTPSuccessResponse;
+        const token = request.header('authorization');
+
+        responseBody = await this.authController.getUserByToken(String(token));
 
         response.status(200);
         response.json(responseBody);
@@ -82,9 +90,17 @@ export class AuthRoutes {
         let responseBody: HTTPErrorResponse | HTTPSuccessResponse;
 
         try {
-          responseBody = await this.authController.logout(
-            request.header('token') || ''
-          );
+          const token = request.header('authorization');
+          if(!token){
+
+            responseBody = new HTTPErrorResponse([ERROR_CODES.INVALID_TOKEN]); 
+
+          }else{
+
+            responseBody = await this.authController.logout( token );
+
+          }
+
         } catch (error) {
           responseBody = new HTTPErrorResponse([
             { code: error.code || 500, message: error.message }
@@ -97,7 +113,7 @@ export class AuthRoutes {
     );
 
     this.router.post(
-      '/GenerateResetPassword',
+      '/generate-reset-password',
       async (
         request: express.Request,
         response: express.Response,
@@ -106,15 +122,9 @@ export class AuthRoutes {
         let responseBody: HTTPErrorResponse | HTTPSuccessResponse;
 
         if (request.body.username) {
-          try {
             responseBody = await this.authController.generateResetPasswordToken(
               request.body.username
             );
-          } catch (error) {
-            responseBody = new HTTPErrorResponse([
-              { code: error.code || 500, message: error.message }
-            ]);
-          }
         } else {
           responseBody = new HTTPErrorResponse([
             ERROR_CODES.USER_NAME_REQUIRED
@@ -127,7 +137,7 @@ export class AuthRoutes {
     );
 
     this.router.post(
-      '/changePasswordByToken/:token',
+      '/change-password-by-token/:token',
       async (
         request: express.Request,
         response: express.Response,
@@ -139,16 +149,10 @@ export class AuthRoutes {
           request.body.newPassword &&
           Types.ObjectId.isValid(request.params.token)
         ) {
-          try {
             responseBody = await this.authController.changePasswordByToken(
               request.params.token,
               request.body.newPassword
             );
-          } catch (error) {
-            responseBody = new HTTPErrorResponse([
-              { code: error.code || 500, message: error.message }
-            ]);
-          }
         } else {
           responseBody = new HTTPErrorResponse([
             ERROR_CODES.INVALID_TOKEN_OR_PASS
@@ -161,7 +165,7 @@ export class AuthRoutes {
     );
 
     this.router.post(
-      '/loginAs/:_id',
+      '/login-as/:_id',
       async (
         request: express.Request,
         response: express.Response,
@@ -173,15 +177,9 @@ export class AuthRoutes {
           responseBody = new HTTPAuthErrorResponse();
         } else {
           if (request.params._id) {
-            try {
               responseBody = await this.authController.loginAs(
                 request.params._id
               );
-            } catch (error) {
-              responseBody = new HTTPErrorResponse([
-                { code: error.code || 500, message: error.message }
-              ]);
-            }
           } else {
             responseBody = new HTTPErrorResponse([ERROR_CODES.INVALID_USER_ID]);
           }

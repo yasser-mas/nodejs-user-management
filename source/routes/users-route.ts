@@ -1,5 +1,4 @@
 import {
-  GET_USER_BY_ID,
   NEW_USER_SCHEMA,
   EDIT_USER_SCHEMA,
   GET_ALL_USERS,
@@ -13,7 +12,6 @@ import HTTPSuccessResponse from '../lib/http/http-success-response';
 import { UserController } from '../controllers/users-controller';
 import { getListOfErrors } from '../lib/schema-helper';
 import { Types } from 'mongoose';
-import HTTPAuthErrorResponse from '../lib/http/http-error-auth';
 import { ERROR_CODES } from '../lib/error-codes';
 
 export class UserRoutes {
@@ -38,13 +36,7 @@ export class UserRoutes {
         const validateScehma = Joi.validate(request.query, GET_ALL_USERS);
 
         if (!validateScehma.error) {
-          try {
             responseBody = await this.userController.getAllUsers(request.query);
-          } catch (error) {
-            responseBody = new HTTPErrorResponse([
-              { code: error.code || 500, message: error.message }
-            ]);
-          }
         } else {
           responseBody = new HTTPErrorResponse(getListOfErrors(validateScehma));
         }
@@ -66,15 +58,9 @@ export class UserRoutes {
         // const validateScehma = Joi.validate(request.params , GET_USER_BY_ID);
 
         if (Types.ObjectId.isValid(request.params._id)) {
-          try {
             responseBody = await this.userController.getUserById(
               request.params
             );
-          } catch (error) {
-            responseBody = new HTTPErrorResponse([
-              { code: 500, message: error.message }
-            ]);
-          }
         } else {
           responseBody = new HTTPErrorResponse([ERROR_CODES.INVALID_USER_ID]);
         }
@@ -94,15 +80,9 @@ export class UserRoutes {
         let responseBody: HTTPErrorResponse | HTTPSuccessResponse;
 
         if (Types.ObjectId.isValid(request.params._id)) {
-          try {
-            responseBody = await this.userController.deleteUserById(
-              request.params
-            );
-          } catch (error) {
-            responseBody = new HTTPErrorResponse([
-              { code: 500, message: error.message }
-            ]);
-          }
+          responseBody = await this.userController.deleteUserById(
+            request.params
+          );
         } else {
           responseBody = new HTTPErrorResponse([ERROR_CODES.INVALID_USER_ID]);
         }
@@ -124,13 +104,7 @@ export class UserRoutes {
         const validateScehma = Joi.validate(request.body, NEW_USER_SCHEMA);
 
         if (!validateScehma.error) {
-          try {
-            responseBody = await this.userController.addUser(request.body);
-          } catch (error) {
-            responseBody = new HTTPErrorResponse([
-              { code: error.code || 500, message: error.message }
-            ]);
-          }
+          responseBody = await this.userController.addUser(request.body);
         } else {
           responseBody = new HTTPErrorResponse(getListOfErrors(validateScehma));
         }
@@ -152,13 +126,7 @@ export class UserRoutes {
         const validateScehma = Joi.validate(request.body, EDIT_USER_SCHEMA);
 
         if (!validateScehma.error) {
-          try {
-            responseBody = await this.userController.editUser(request.body);
-          } catch (error) {
-            responseBody = new HTTPErrorResponse([
-              { code: error.code || 500, message: error.message }
-            ]);
-          }
+          responseBody = await this.userController.editUser(request.body);
         } else {
           responseBody = new HTTPErrorResponse(getListOfErrors(validateScehma));
         }
@@ -169,17 +137,18 @@ export class UserRoutes {
     );
 
     this.router.put(
-      '/changeOwnInfo',
+      '/change-own-info',
       async (
         request: express.Request,
         response: express.Response,
         next: express.NextFunction
       ) => {
         let responseBody: HTTPErrorResponse | HTTPSuccessResponse;
+        const userData = response.locals.userData;
 
-        if (response.locals.tokenData._id !== request.body._id) {
+        if (userData._id !== request.body._id) {
           response.status(200);
-          response.json(new HTTPErrorResponse([ERROR_CODES.INVALID_TOKEN]));
+          response.json(new HTTPErrorResponse([ERROR_CODES.INVALID_USER_ID]));
           return;
         }
 
@@ -189,13 +158,7 @@ export class UserRoutes {
         );
 
         if (!validateScehma.error) {
-          try {
             responseBody = await this.userController.editUser(request.body);
-          } catch (error) {
-            responseBody = new HTTPErrorResponse([
-              { code: error.code || 500, message: error.message }
-            ]);
-          }
         } else {
           responseBody = new HTTPErrorResponse(getListOfErrors(validateScehma));
         }
@@ -206,7 +169,7 @@ export class UserRoutes {
     );
 
     this.router.put(
-      '/changeOwnPassword',
+      '/change-own-password',
       async (
         request: express.Request,
         response: express.Response,
@@ -214,11 +177,10 @@ export class UserRoutes {
       ) => {
         let responseBody: HTTPErrorResponse | HTTPSuccessResponse;
 
-        // console.log(response.locals.tokenData);
         const requestBody = request.body;
-        const tokenData = response.locals.tokenData;
+        const userData = response.locals.userData;
 
-        if (tokenData._id !== requestBody._id) {
+        if (userData._id !== requestBody._id) {
           response.status(200);
           response.json(new HTTPErrorResponse([ERROR_CODES.INVALID_TOKEN]));
           return;
@@ -231,15 +193,9 @@ export class UserRoutes {
 
 
         if (!validateScehma.error) {
-          try {
-            responseBody = await this.userController.changePassword(
-              requestBody
-            );
-          } catch (error) {
-            responseBody = new HTTPErrorResponse([
-              { code: error.code || 500, message: error.message }
-            ]);
-          }
+          responseBody = await this.userController.changePassword(
+            requestBody
+          );
         } else {
           responseBody = new HTTPErrorResponse(getListOfErrors(validateScehma));
         }
@@ -250,7 +206,7 @@ export class UserRoutes {
     );
 
     this.router.put(
-      '/changeOtherPassword',
+      '/change-other-password',
       async (
         request: express.Request,
         response: express.Response,
@@ -261,13 +217,7 @@ export class UserRoutes {
         const validateScehma = Joi.validate(request.body, EDIT_USER_SCHEMA);
 
         if (!validateScehma.error) {
-          try {
-            responseBody = await this.userController.editUser(request.body);
-          } catch (error) {
-            responseBody = new HTTPErrorResponse([
-              { code: error.code || 500, message: error.message }
-            ]);
-          }
+          responseBody = await this.userController.editUser(request.body);
         } else {
           responseBody = new HTTPErrorResponse(getListOfErrors(validateScehma));
         }

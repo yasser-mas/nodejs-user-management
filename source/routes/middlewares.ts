@@ -1,18 +1,18 @@
-import { UserController } from './../controllers/users-controller';
 import express from 'express';
-import { verify } from 'jsonwebtoken';
 import HTTPAuthErrorResponse from '../lib/http/http-error-auth';
 import { AuthController } from '../controllers/auth-controller';
+import { JwtHelper } from '../helpers/jwt-helper';
+import { TokenPayload } from '../dto/token-payload';
 
 const authController = new AuthController();
-const userController = new UserController();
 
 export async function httpInterceptor(
   req: express.Request,
   res: express.Response,
   next: express.NextFunction
 ) {
-  const token = req.header('token');
+  const token = req.header('authorization');
+  let jwtHelper : JwtHelper = JwtHelper.getInstance();
 
   /*
    * Validate if request require token and permission or not
@@ -28,25 +28,12 @@ export async function httpInterceptor(
       return;
     } else {
       try {
-        // Parse Token
-        parsedToken = await verify(token, String(process.env.JWT_SECRET_KEY));
 
-        // If Invalid Token Return Unauth error message
-        if (!((<any> parsedToken)._id && (<any>parsedToken).username)) {
-          return res.json(new HTTPAuthErrorResponse());
-        }
-
-        // If valid ? get user by token
-        const user = await userController.getUserByToken(token);
-
-        // If can't find active session for this token ? return unauth error
-        if (!user) {
-          return res.json(new HTTPAuthErrorResponse());
-        }
+        const userData : TokenPayload  = await jwtHelper.getAccessTokenPayload(token);
 
         // Store parsed token and user data to be used in route controller
         res.locals.tokenData = parsedToken;
-        res.locals.userData = user;
+        res.locals.userData = userData;
       } catch (e) {
         console.log(e);
         res.json(new HTTPAuthErrorResponse());

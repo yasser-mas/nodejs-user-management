@@ -52,8 +52,12 @@ export class UserController {
 
     let responseBody: HTTPErrorResponse | HTTPSuccessResponse;
     try {
-      const deletedUser = await UserModel.softDelete(body._id);
-      responseBody = new HTTPSuccessResponse(deletedUser);
+      const user = await UserModel.getUserById(body._id);
+      if(!user){
+        return new HTTPErrorResponse([ERROR_CODES.INVALID_USER_ID]);
+      }
+      await UserModel.softDelete(body._id);
+      responseBody = new HTTPSuccessResponse({});
 
     } catch (error) {
       console.log(error);
@@ -100,11 +104,16 @@ export class UserController {
   }
 
 
-  async editUser(user: any): Promise<HTTPErrorResponse | HTTPSuccessResponse> {
+  async editUser(user: IUserDocument): Promise<HTTPErrorResponse | HTTPSuccessResponse> {
 
     let responseBody: HTTPErrorResponse | HTTPSuccessResponse;
     try {
+      const userExits = await UserModel.getUserById(user._id);
+      if(!userExits){
+        return new HTTPErrorResponse([ERROR_CODES.INVALID_USER_ID]);
+      }
       const updatedUser = await UserModel.updateUser(user);
+      
       responseBody = new HTTPSuccessResponse(updatedUser);
 
     } catch (error) {
@@ -130,7 +139,7 @@ export class UserController {
         user.newPassword = hashedPassword;
 
         const updatedUser = await UserModel.changePassword(user);
-        responseBody = new HTTPSuccessResponse(updatedUser);
+        responseBody = new HTTPSuccessResponse({});
       } else {
 
         responseBody = new HTTPErrorResponse([ERROR_CODES.INVALID_OLD_PASS]);

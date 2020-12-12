@@ -34,15 +34,9 @@ export class GroupsRoutes {
         const validateScehma = Joi.validate(request.query, GET_ALL_GROUPS);
 
         if (!validateScehma.error) {
-          try {
             responseBody = await this.groupController.getAllGroups(
               request.query
             );
-          } catch (error) {
-            responseBody = new HTTPErrorResponse([
-              { code: 500, message: error.message }
-            ]);
-          }
         } else {
           responseBody = new HTTPErrorResponse(getListOfErrors(validateScehma));
         }
@@ -62,15 +56,9 @@ export class GroupsRoutes {
         let responseBody: HTTPErrorResponse | HTTPSuccessResponse;
 
         if (Types.ObjectId.isValid(request.params._id)) {
-          try {
             responseBody = await this.groupController.getGroupById(
               request.params
             );
-          } catch (error) {
-            responseBody = new HTTPErrorResponse([
-              { code: 500, message: error.message }
-            ]);
-          }
         } else {
           responseBody = new HTTPErrorResponse([ERROR_CODES.INVALID_GROUP_ID]);
         }
@@ -90,15 +78,9 @@ export class GroupsRoutes {
         let responseBody: HTTPErrorResponse | HTTPSuccessResponse;
 
         if (Types.ObjectId.isValid(request.params._id)) {
-          try {
             responseBody = await this.groupController.deleteGroupById(
               request.params
             );
-          } catch (error) {
-            responseBody = new HTTPErrorResponse([
-              { code: 500, message: error.message }
-            ]);
-          }
         } else {
           responseBody = new HTTPErrorResponse([ERROR_CODES.INVALID_GROUP_ID]);
         }
@@ -120,13 +102,7 @@ export class GroupsRoutes {
         const validateScehma = Joi.validate(request.body, ADD_GROUP_SCHEMA);
 
         if (!validateScehma.error) {
-          try {
             responseBody = await this.groupController.addGroup(request.body);
-          } catch (error) {
-            responseBody = new HTTPErrorResponse([
-              { code: error.code || 500, message: error.message }
-            ]);
-          }
         } else {
           responseBody = new HTTPErrorResponse(getListOfErrors(validateScehma));
         }
@@ -147,13 +123,7 @@ export class GroupsRoutes {
         const validateScehma = Joi.validate(request.body, EDIT_GROUP_SCHEMA);
 
         if (!validateScehma.error) {
-          try {
             responseBody = await this.groupController.editGroup(request.body);
-          } catch (error) {
-            responseBody = new HTTPErrorResponse([
-              { code: error.code || 500, message: error.message }
-            ]);
-          }
         } else {
           responseBody = new HTTPErrorResponse(getListOfErrors(validateScehma));
         }

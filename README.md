@@ -79,7 +79,8 @@ You can change env variables from **.env** file
 | PORT | HTTP Server Port |
 | HOST | HTTP Server HOST |
 | DB_URL | Mongodb URL |
-| JWT_SECRET_KEY | Json Web Token Secret Key |
+| JWT_ACCESS_SECRET_KEY | Json Web Token Access Secret Key |
+| JWT_REFRESH_SECRET_KEY | Json Web Token Refresh Secret Key |
 | SESSION_EXP_TIME | Session Expiration Time (MS) |
 | RESET_PASSWORD_EXP_TIME | Reset Password Token Expiration Time (MS) |
 

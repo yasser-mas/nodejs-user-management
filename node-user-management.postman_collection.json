@@ -14,15 +14,11 @@
 						"method": "GET",
 						"header": [
 							{
-								"key": "token",
-								"value": "{{user_token}}",
+								"key": "Authorization",
+								"value": "Basic {{user_token}}",
 								"type": "text"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}/users?limit=100&offset=0&sortBy=username&sortOrder=desc",
 							"host": [
@@ -59,23 +55,19 @@
 						"method": "GET",
 						"header": [
 							{
-								"key": "token",
-								"value": "{{user_token}}",
+								"key": "Authorization",
+								"value": "Basic {{user_token}}",
 								"type": "text"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
-							"raw": "{{url}}/users/5cad2e48a9e7ee1e2c1f3d5b",
+							"raw": "{{url}}/users/5ca8c73febf7982f736f77b3",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"users",
-								"5cad2e48a9e7ee1e2c1f3d5b"
+								"5ca8c73febf7982f736f77b3"
 							]
 						}
 					},
@@ -87,20 +79,23 @@
 						"method": "DELETE",
 						"header": [
 							{
-								"key": "token",
-								"value": "{{user_token}}",
+								"key": "Authorization",
+								"value": "Basic {{user_token}}",
 								"type": "text"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
 						"url": {
-							"raw": "{{url}}/users/5ca92502519ed511a57f2846",
+							"raw": "{{url}}/users/5fd4d99f0f86fe44b2fc7d57",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"users",
-								"5ca92502519ed511a57f2846"
+								"5fd4d99f0f86fe44b2fc7d57"
 							]
 						}
 					},
@@ -141,8 +136,8 @@
 								"type": "text"
 							},
 							{
-								"key": "token",
-								"value": "{{user_token}}",
+								"key": "Authorization",
+								"value": "Basic {{user_token}}",
 								"type": "text"
 							}
 						],
@@ -174,14 +169,14 @@
 								"value": "application/json"
 							},
 							{
-								"key": "token",
-								"value": "{{user_token}}",
+								"key": "Authorization",
+								"value": "Basic {{user_token}}",
 								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"_id\": \"5ca93b8bb64e942378493e96\",\n    \"displayName\": \"NEwUsERnAme\",\n    \"email\": \"super@sad.asd\",\n    \"type\": \"user \",\n    \"isSuperUser\": true,\n    \"groups\": []\n}"
+							"raw": "{\n    \"_id\": \"5fd4dac5bb83634665def281\",\n    \"displayName\": \"NEwUsERnAme\",\n    \"email\": \"super@sad.asd\",\n    \"type\": \"user \",\n    \"isSuperUser\": true,\n    \"groups\": []\n}"
 						},
 						"url": {
 							"raw": "{{url}}/users",
@@ -207,8 +202,8 @@
 								"value": "application/json"
 							},
 							{
-								"key": "token",
-								"value": "{{user_token}}",
+								"key": "Authorization",
+								"value": "Basic {{user_token}}",
 								"type": "text"
 							}
 						],
@@ -217,13 +212,13 @@
 							"raw": "{\n  \"_id\":\"5ca8c73febf7982f736f77b3\",\n  \"oldPassword\":\"auto_ixeds\",\n  \"newPassword\":\"auto_ixeds\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/users/changeOwnPassword",
+							"raw": "{{url}}/users/change-own-password",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"users",
-								"changeOwnPassword"
+								"change-own-password"
 							]
 						}
 					},
@@ -241,9 +236,9 @@
 								"value": "application/json"
 							},
 							{
-								"key": "token",
+								"key": "Authorization",
 								"type": "text",
-								"value": "{{user_token}}"
+								"value": "Basic {{user_token}}"
 							}
 						],
 						"body": {
@@ -251,13 +246,13 @@
 							"raw": "{\n  \"_id\":\"5ca8c73febf7982f736f77b3\",\n  \"displayName\":\"super Test\",\n  \"email\":\"super@asd.sad\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/users/changeOwnInfo",
+							"raw": "{{url}}/users/change-own-info",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"users",
-								"changeOwnInfo"
+								"change-own-info"
 							]
 						}
 					},
@@ -274,15 +269,11 @@
 						"method": "GET",
 						"header": [
 							{
-								"key": "token",
+								"key": "Authorization",
 								"type": "text",
-								"value": "{{user_token}}"
+								"value": "Basic {{user_token}}"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}/groups?limit=2&offset=0&sortBy=username&sortOrder=desc",
 							"host": [
@@ -319,15 +310,11 @@
 						"method": "GET",
 						"header": [
 							{
-								"key": "token",
-								"value": "{{user_token}}",
+								"key": "Authorization",
+								"value": "Basic {{user_token}}",
 								"type": "text"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}/groups/5ca8d337ebf7982f736f77c1",
 							"host": [
@@ -376,9 +363,9 @@
 								"value": "application/json"
 							},
 							{
-								"key": "token",
+								"key": "Authorization",
 								"type": "text",
-								"value": "{{user_token}}"
+								"value": "Basic {{user_token}}"
 							}
 						],
 						"body": {
@@ -403,20 +390,23 @@
 						"method": "DELETE",
 						"header": [
 							{
-								"key": "token",
+								"key": "Authorization",
 								"type": "text",
-								"value": "{{user_token}}"
+								"value": "Basic {{user_token}}"
 							}
 						],
-						"body": {},
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
 						"url": {
-							"raw": "{{url}}/groups/5caa9257c8d351215a48880e",
+							"raw": "{{url}}/groups/5fd54fbdeac59674aa68b979",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"groups",
-								"5caa9257c8d351215a48880e"
+								"5fd54fbdeac59674aa68b979"
 							]
 						}
 					},
@@ -424,6 +414,29 @@
 				},
 				{
 					"name": "Edit Group",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "b33880c1-cfeb-45fd-ab30-cb57881b641f",
+								"exec": [
+									"",
+									"function makeid() {",
+									"  var text = \"\";",
+									"  var possible = \"abcdefghijklmnopqrstuvwxyz\";",
+									"",
+									"  for (var i = 0; i < 5; i++)",
+									"    text += possible.charAt(Math.floor(Math.random() * possible.length));",
+									"",
+									"  return text;",
+									"}",
+									"",
+									"pm.variables.set(\"newGroupName\", 'auto_' + makeid());"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -434,14 +447,14 @@
 								"value": "application/json"
 							},
 							{
-								"key": "token",
+								"key": "Authorization",
 								"type": "text",
-								"value": "{{user_token}}"
+								"value": "Basic {{user_token}}"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"_id\": \"5caa93b8a5e79a23485b58c8\",\n    \"name\": \"{{newGroupName}}\",\n    \"permissions\":[\"5ca8d2ecebf7982f736f77bc\", \n        \"5ca924a1ebf798085daea400\", \n        \"5ca92782ebf798085daea407\", \n        \"5ca9386febf798085daea40d\", \n        \"5ca93c2aebf798085daea42b\", \n        \"5caa8692ebf7980b7bd90515\", \n        \"5caa8f44ebf7980b7bd9051b\", \n        \"5caa9072ebf7980b7bd9051c\", \n        \"5caa90faebf7980b7bd9051d\", \n        \"5caa9283ebf7980b7bd90528\", \n        \"5caa92f7ebf7980b7bd90532\"]\n}"
+							"raw": "{\n    \"_id\": \"5fd50dfbc1d33b56af4dc817\",\n    \"name\": \"{{newGroupName}}\",\n    \"permissions\":[\"5ca8d2ecebf7982f736f77bc\", \n        \"5ca924a1ebf798085daea400\", \n        \"5ca92782ebf798085daea407\", \n        \"5ca9386febf798085daea40d\", \n        \"5ca93c2aebf798085daea42b\", \n        \"5caa8692ebf7980b7bd90515\", \n        \"5caa8f44ebf7980b7bd9051b\", \n        \"5caa9072ebf7980b7bd9051c\", \n        \"5caa90faebf7980b7bd9051d\", \n        \"5caa9283ebf7980b7bd90528\", \n        \"5caa92f7ebf7980b7bd90532\"]\n}"
 						},
 						"url": {
 							"raw": "{{url}}/groups",
@@ -471,9 +484,9 @@
 									"let jsonData = pm.response.json();",
 									"",
 									"",
-									"// console.log(_.get(jsonData,'object.tokenObj.token'));",
 									"",
-									"pm.globals.set('user_token', _.get(jsonData,'object.tokenObj.token'));"
+									"pm.environment.set('user_token', _.get(jsonData,'object.accessToken'));",
+									"pm.environment.set('user_refresh_token', _.get(jsonData,'object.refreshToken'));"
 								],
 								"type": "text/javascript"
 							}
@@ -513,7 +526,35 @@
 					"response": []
 				},
 				{
-					"name": "Login As",
+					"name": "Refresh Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0b42dfe2-b31d-475f-a528-90d580ae7c7b",
+								"exec": [
+									"let jsonData = pm.response.json();",
+									"",
+									"",
+									"// console.log(_.get(jsonData,'object.tokenObj.token'));",
+									"",
+									"pm.globals.set('user_token', _.get(jsonData,'object.accessToken'));",
+									"pm.globals.set('user_refresh_token', _.get(jsonData,'object.refreshToken'));"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "89250004-22ab-4422-b61f-4b3a6eb8f0a8",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -526,22 +567,22 @@
 							{
 								"key": "Token",
 								"type": "text",
-								"value": "{{user_token}}"
+								"value": "5ca28f306ffb0401be639daa",
+								"disabled": true
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": ""
+							"raw": "{\n  \"token\":\"{{user_refresh_token}}\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/auth/loginAs/5cb51b4c024e412d2836c8be",
+							"raw": "{{url}}/auth/refresh-token",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"auth",
-								"loginAs",
-								"5cb51b4c024e412d2836c8be"
+								"refresh-token"
 							]
 						}
 					},
@@ -549,6 +590,22 @@
 				},
 				{
 					"name": "Get User By Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b5abb8d5-c7f5-4bda-afa3-4f7817112125",
+								"exec": [
+									"let jsonData = pm.response.json();",
+									"",
+									"",
+									"",
+									"pm.environment.set('user_id', _.get(jsonData,'object._id'));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
 					},
@@ -562,9 +619,9 @@
 								"value": "application/json"
 							},
 							{
-								"key": "token",
+								"key": "Authorization",
 								"type": "text",
-								"value": "{{user_token}}"
+								"value": "Basic {{user_token}}"
 							}
 						],
 						"body": {
@@ -572,13 +629,48 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/auth/getUserByToken",
+							"raw": "{{url}}/auth/get-user-by-token",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"auth",
-								"getUserByToken"
+								"get-user-by-token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login As",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Basic {{user_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}/auth/login-as/{{user_id}}",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"auth",
+								"login-as",
+								"{{user_id}}"
 							]
 						}
 					},
@@ -596,15 +688,11 @@
 								"value": "application/json"
 							},
 							{
-								"key": "Token",
-								"value": "{{user_token}}",
+								"key": "authorization",
+								"value": "Basic {{user_token}}",
 								"type": "text"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}/auth/logout",
 							"host": [
@@ -632,16 +720,16 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"username\": \"auto_rziei\"\n}"
+							"raw": "{\n\t\"username\": \"auto_sjvfz\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/auth/GenerateResetPassword",
+							"raw": "{{url}}/auth/generate-reset-password",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"auth",
-								"GenerateResetPassword"
+								"generate-reset-password"
 							]
 						}
 					},
@@ -664,14 +752,14 @@
 							"raw": "{\n\t\"newPassword\": \"asdasdsa\"\n}"
 						},
 						"url": {
-							"raw": "{{url}}/auth/changePasswordByToken/5cae830470d7a61f0696a6bd",
+							"raw": "{{url}}/auth/change-password-by-token/5fd513558de0345bbc9e877b",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"auth",
-								"changePasswordByToken",
-								"5cae830470d7a61f0696a6bd"
+								"change-password-by-token",
+								"5fd513558de0345bbc9e877b"
 							]
 						}
 					},
@@ -688,15 +776,11 @@
 						"method": "GET",
 						"header": [
 							{
-								"key": "token",
-								"value": "{{user_token}}",
+								"key": "Authorization",
+								"value": "Basic {{user_token}}",
 								"type": "text"
 							}
 						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
 						"url": {
 							"raw": "{{url}}/permissions",
 							"host": [
@@ -716,10 +800,6 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
 				"url": {
 					"raw": "{{url}}",
 					"host": [
@@ -754,7 +834,7 @@
 	],
 	"variable": [
 		{
-			"id": "d9289a6c-4afc-494e-87f9-b9cc4ce4605a",
+			"id": "c490d204-b671-42f2-9f4b-ba2764886e3c",
 			"key": "url",
 			"value": "localhost:8082",
 			"type": "string"

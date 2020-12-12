@@ -1,5 +1,6 @@
 # Ignore Output folder 
 build/
+.vscode
 
 # Ignore Node Modules 
 

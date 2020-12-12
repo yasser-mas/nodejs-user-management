@@ -9,4 +9,4 @@ import { Server } from './server';
 /*
  * Initiate Server
  */
-let nodeServer = new Server();
+new Server();

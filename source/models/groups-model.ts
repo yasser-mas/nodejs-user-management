@@ -74,8 +74,8 @@ GroupsSchema.statics.addGroup = function(group: any): Promise<IGroupsDocumnet> {
 
 GroupsSchema.statics.updateGroup = function(
   group: IGroupsDocumnet
-): DocumentQuery<IGroupsDocumnet[], IGroupsDocumnet, {}> {
-  return (<IGroupsModel> this).updateOne(
+): DocumentQuery<IGroupsDocumnet | null, IGroupsDocumnet , {}> {
+  return (<IGroupsModel> this).findOneAndUpdate(
     { _id: group._id, deleted: false },
     group
   );

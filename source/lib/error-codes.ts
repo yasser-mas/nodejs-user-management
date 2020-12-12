@@ -7,6 +7,7 @@ export const ERROR_CODES = {
   INVALID_TOKEN: { code: 401, message: 'Invalid Token !' },
   INVALID_TOKEN_OR_PASS: { code: 401, message: 'Invalid Token or Password !' },
   INVALID_USER_ID: { code: 400, message: 'Invalid User ID !' },
+  INVALID_USER_NAME: { code: 400, message: 'Invalid User Name !' },
   USER_EXISTS: { code: 409, message: 'Username Already Exists !' },
   GROUP_EXISTS: { code: 409, message: 'Group Name Already Exists !' },
   GENERATE_TOKEN: { code: 409, message: 'Can\'t generate token !' },

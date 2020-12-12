@@ -1,3 +1,23 @@
 [
-{ "_id" : { "$oid" : "5ca8d337ebf7982f736f77c1" }, "name" : "Admins", "deleted" : false, "permissions" : [ "5ca8d2ecebf7982f736f77bc", "5ca924a1ebf798085daea400", "5ca92782ebf798085daea407", "5ca9386febf798085daea40d", "5ca93c2aebf798085daea42b", "5caa8692ebf7980b7bd90515", "5caa8f44ebf7980b7bd9051b", "5caa9072ebf7980b7bd9051c", "5caa90faebf7980b7bd9051d", "5caa9283ebf7980b7bd90528", "5caa92f7ebf7980b7bd90532" ], "createdAt" : { "$date" : "2019-04-08T00:09:25.664+0000" }, "updatedAt" : { "$date" : "2019-04-08T00:09:25.664+0000" }, "__v" : 0 }
+  {
+    "_id": { "$oid": "5ca8d337ebf7982f736f77c1" },
+    "name": "Admins",
+    "deleted": false,
+    "permissions": [
+      "5ca8d2ecebf7982f736f77bc",
+      "5ca924a1ebf798085daea400",
+      "5ca92782ebf798085daea407",
+      "5ca9386febf798085daea40d",
+      "5ca93c2aebf798085daea42b",
+      "5caa8692ebf7980b7bd90515",
+      "5caa8f44ebf7980b7bd9051b",
+      "5caa9072ebf7980b7bd9051c",
+      "5caa90faebf7980b7bd9051d",
+      "5caa9283ebf7980b7bd90528",
+      "5caa92f7ebf7980b7bd90532"
+    ],
+    "createdAt": { "$date": "2019-04-08T00:09:25.664+0000" },
+    "updatedAt": { "$date": "2019-04-08T00:09:25.664+0000" },
+    "__v": 0
+  }
 ]

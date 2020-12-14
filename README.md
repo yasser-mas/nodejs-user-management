@@ -100,25 +100,19 @@ You can change env variables from **.env** file
 ```
 
 Client ->> Server: send login request
-
-Note right of Server: validate username <br/> and password
-
 Server ->> Client: return access & refresh token
 
-Note right of Client: all subsequents requests 
+
+// all subsequents requests 
 
 Client ->> Server: send access token in Authorization header
+Server ->> Client: return response
 
-Note right of Server: Validate token
 
-Server ->> Client:  return response
 
-Note right of Client: If token expired ?
+// If token expired ?
 
 Client ->> Server: send refresh token request
-
-Note right of Server: Validate refresh token
-
 Server ->> Client: return new access & refresh token
 
 

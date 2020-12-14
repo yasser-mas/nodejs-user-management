@@ -97,8 +97,7 @@ You can change env variables from **.env** file
  **Authentication** 
 
  
-```mermaid
-sequenceDiagram
+```
 
 Client ->> Server: send login request
 
@@ -125,7 +124,6 @@ Server ->> Client: return new access & refresh token
 
 ```
 
-```mermaid
 
 
 

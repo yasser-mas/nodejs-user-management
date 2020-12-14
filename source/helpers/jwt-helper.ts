@@ -6,6 +6,10 @@ export class JwtHelper {
   private static _jwtHelper = new JwtHelper();
   private JWT_ACCESS_SECRET_KEY =  process.env.JWT_ACCESS_SECRET_KEY; 
   private JWT_REFRESH_SECRET_KEY =  process.env.JWT_REFRESH_SECRET_KEY; 
+  private ACCESS_TOKEN_EXP_TIME =  process.env.ACCESS_TOKEN_EXP_TIME; 
+  private REFRESH_TOKEN_EXP_TIME =  process.env.REFRESH_TOKEN_EXP_TIME; 
+  private JTW_ISSUER =  process.env.JTW_ISSUER; 
+
   private constructor() {}
 
   static getInstance() {
@@ -15,8 +19,8 @@ export class JwtHelper {
   getAccessToken(user: TokenPayload): Promise<string> {
     return new Promise((resolve, reject) => {
       const options = {
-        expiresIn: '1h',
-        issuer: 'node-um.com',
+        expiresIn: this.ACCESS_TOKEN_EXP_TIME,
+        issuer: this.JTW_ISSUER,
         audience: user.username,
       };
       return sign(
@@ -58,8 +62,8 @@ export class JwtHelper {
   getRefreshToken(user: TokenPayload): Promise<string> {
     return new Promise((resolve, reject) => {
       const options = {
-        expiresIn: '1y',
-        issuer: 'node-um.com',
+        expiresIn: this.REFRESH_TOKEN_EXP_TIME,
+        issuer: this.JTW_ISSUER,
         audience: user.username,
       };
       return sign(

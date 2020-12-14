@@ -12,8 +12,6 @@ import { JwtHelper } from '../helpers/jwt-helper';
 export class AuthController {
   
   jwtHelper : JwtHelper = JwtHelper.getInstance();
-  TOKEN_REQUIRED_BY_DEFAULT : boolean = (process.env.TOKEN_REQUIRED_BY_DEFAULT === 'true');
-  PERMISSION_REQUIRED_BY_DEFAULT : boolean = ( process.env.PERMISSION_REQUIRED_BY_DEFAULT === 'true');
 
   constructor() {}
 
@@ -262,8 +260,8 @@ export class AuthController {
   checkPermissions(
     request: Request
   ): { tokenRequired: boolean; permissionRequired: boolean } {
-    let tokenRequired = this.TOKEN_REQUIRED_BY_DEFAULT;
-    let permissionRequired = this.PERMISSION_REQUIRED_BY_DEFAULT;
+    let tokenRequired = false;
+    let permissionRequired = false;
 
     PermissionsList.getPermissionsList().forEach(permission => {
       let requestPath = request.path.split('/');
